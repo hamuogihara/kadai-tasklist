@@ -13,7 +13,7 @@
                     @if (Auth::check())    
                         <li class="nav-item">{!! link_to_route('tasks.create', 'タスクの追加', [], ['class' => 'nav-link']) !!}</li>
                         {{-- ログアウトへのリンク --}}
-                        <li class="nav-item">{!! link_to_route('logout.get', 'Logout') !!}</li>
+                        <li class="nav-item">{!! link_to_route('logout.get', 'ログアウト', [], ['class' => 'nav-link']) !!}</li>
                     @else
                         {{-- ユーザ登録ページへのリンク --}}
                         <li class="nav-item">{!! link_to_route('signup.get', 'Signup', [], ['class' => 'nav-link']) !!}</li>

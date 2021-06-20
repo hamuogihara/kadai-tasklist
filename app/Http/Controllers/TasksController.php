@@ -15,11 +15,21 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $tasks = Task::all();
-
-        return view('tasks.index', [
-            'tasks' => $tasks,
-        ]);
+        if (\Auth::check()) {
+            $user = \Auth::user();    
+            
+            $tasks = $user->tasks()->get();
+            
+            // $query = Task::query();
+            // $query->where('user_id',$user->id);
+            // $tasks = $query->get();
+    
+            return view('tasks.index', [
+                'tasks' => $tasks,
+            ]);
+        }
+        // Welcome
+        return view('welcome');
     }
 
     /**
@@ -48,11 +58,14 @@ class TasksController extends Controller
             'content'=>'required|max:255',
             'status'=>'required|max:10',
         ]);
+
         
         $task = new Task;
         $task->content = $request->content;
         $task->status = $request->status;
+        $task->user_id = \Auth::id();
         $task->save();
+        
         
         return redirect('/');
     }
@@ -67,9 +80,15 @@ class TasksController extends Controller
     {
         $task = Task::findOrFail($id);
         
+        //ログインしているユーザIDと、taskのユーザIDが一致する場合、画面表示する
+        
+        //一致しない場合、トップ画面にリダイレクトさせる。
+        if (\Auth::id() === $task->user_id) {
         return view('tasks.show',[
             'task' => $task
             ]);
+        }
+        return redirect('/');
     }
 
     /**
@@ -82,9 +101,15 @@ class TasksController extends Controller
     {
         $task = Task::findOrFail($id);
 
-        return view('tasks.edit', [
-            'task' => $task,
-        ]);
+        //ログインしているユーザIDと、taskのユーザIDが一致する場合、画面表示する
+        
+        //一致しない場合、トップ画面にリダイレクトさせる。
+        if (\Auth::id() === $task->user_id) {
+            return view('tasks.edit', [
+                'task' => $task,
+            ]);
+        }
+        return redirect('/');
     }
 
     /**
@@ -119,7 +144,7 @@ class TasksController extends Controller
     {
         $task = Task::findOrFail($id);
         $task->delete();
-
+        
         return redirect('/');
     }
 }

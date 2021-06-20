@@ -11,12 +11,14 @@
 |
 */
 
+/*
 Route::get('/', function () {
     return view('welcome');
 });
+*/
 
 //直でタスクリスト
-//Route::get('/', 'TasksController@index');
+Route::get('/', 'TasksController@index');
 
 // ユーザ登録
 Route::get('signup', 'Auth\RegisterController@showRegistrationForm')->name('signup.get');
@@ -29,3 +31,8 @@ Route::get('logout', 'Auth\LoginController@logout')->name('logout.get');
 
 
 Route::resource('tasks','TasksController');
+
+Route::group(['middleware' => ['auth']], function () {
+    Route::resource('users', 'UsersController', ['only' => ['index', 'show']]);
+    Route::resource('tasks', 'TasksController', ['only' => ['store', 'destroy']]);
+});
